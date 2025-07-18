@@ -1,0 +1,14 @@
+{% extends "base/base.html" %}
+
+{% block title %}Invoice List{% endblock %}
+
+{% block body %}
+<h2>Invoices</h2>
+<ul>
+  {% for invoice in invoices %}
+    <li><a href="{% url 'invoice_detail' invoice.id %}">Invoice #{{ invoice.id }}</a></li>
+  {% empty %}
+    <li>No invoices found.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

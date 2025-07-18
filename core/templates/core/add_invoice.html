@@ -1,0 +1,115 @@
+{% extends "base/base.html" %}
+{% block title %}Create Invoice{% endblock %}
+{% block body %}
+<main class="container mt-4">
+    <h3>Create Invoice</h3>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="company" class="form-label">Select Company</label>
+            <select class="form-select" name="company" id="companySelect" required>
+                <option disabled selected>-- Select Company --</option>
+                {% for company in companies %}
+                <option value="{{ company.id }}">{{ company.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Select Delivery Products</label>
+            <table id="deliveryTableBody" class="table ">
+                <thead>
+                    <tr>
+                        <th>Select</th>
+                        <th>Date</th>
+                        <th>Articolo</th>
+                        <th>Piz</th>
+                        <th>Total Price (€)</th>
+                        <th>Company Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="6" class="text-center">Select a company to load deliveries</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <button class="btn btn-primary" type="submit" id="submitButton" disabled>Create Invoice</button>
+
+    </form>
+</main>
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- AJAX to filter deliveries by company -->
+<script>
+    function checkFormReady() {
+        const companySelected = $('#companySelect').val() !== null;
+        const productSelected = $('input[name="deliveries"]:checked').length > 0;
+
+        if (companySelected && productSelected) {
+            $('#submitButton').prop('disabled', false);
+        } else {
+            $('#submitButton').prop('disabled', true);
+        }
+    }
+
+    $(document).ready(function () {
+        // Check on page load
+        checkFormReady();
+
+        // When company changes, fetch data and check again
+        $('#companySelect').change(function () {
+            const companyId = $(this).val();
+
+            if (companyId) {
+                $.ajax({
+                    url: `/ajax/get-deliveries/${companyId}/`,
+                    method: 'GET',
+                    dataType: 'json',
+                    success: function (response) {
+                        const tbody = $('#deliveryTableBody').find('tbody').length ? $('#deliveryTableBody').find('tbody') : $('#deliveryTableBody');
+                        tbody.empty();
+
+                        if (response.deliveries.length === 0) {
+                            tbody.append(`<tr><td colspan="6" class="text-center">No deliveries found.</td></tr>`);
+                            checkFormReady();
+                            return;
+                        }
+
+                        $.each(response.deliveries, function (index, delivery) {
+                            const row = `
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" class="form-check-input delivery-checkbox" name="deliveries" value="${delivery.id}">
+                                    </td>
+                                    <td>${delivery.date}</td>
+                                    <td>${delivery.product_art}</td>
+                                    <td>${delivery.piz}</td>
+                                    <td>${delivery.total_price}</td>
+                                    <td>${delivery.company_name}</td>
+                                </tr>`;
+                            tbody.append(row);
+                        });
+
+                        // Attach change event to newly added checkboxes
+                        $('.delivery-checkbox').change(checkFormReady);
+                        checkFormReady();
+                    },
+                    error: function () {
+                        alert('Failed to load deliveries. Try again.');
+                    }
+                });
+            } else {
+                $('#deliveryTableBody').html('<tr><td colspan="6" class="text-center">Select a company to load deliveries</td></tr>');
+                checkFormReady();
+            }
+        });
+
+        // Existing checkboxes (if any)
+        $('input[name="deliveries"]').change(checkFormReady);
+    });
+</script>
+
+
+{% endblock %}

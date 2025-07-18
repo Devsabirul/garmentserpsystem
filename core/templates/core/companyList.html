@@ -1,0 +1,52 @@
+{% extends "base/base.html" %} {% load static %} {% block title %}
+Company List{% endblock title %} {% block body %}
+<main>
+  <div class="container">
+    <div class="row justify-content-center p-4">
+      <div class="col-12">
+        <div class="row mb-3">
+          <div class="col-12">
+            <h3>Tables</h3>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <div class="card mb-3">
+              <div class="card-header">
+                <i class="fas fa-table me-1"></i>
+                Company Tables
+              </div>
+              <div class="card-body">
+                <table id="datatablesSimple">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Address</th>
+                      <th>Phone Number</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for company in companys %}
+                    <tr>
+                      <td> {{company.name}} </td>
+                      <td>{{company.address}}</td>
+                      <td>{{company.phone_num}}</td>
+                      <td>
+                        <a class="btn btn-sm" href="">Edit</a>
+                        <a class="btn btn-sm" href="">Delete</a>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+{% endblock body %}

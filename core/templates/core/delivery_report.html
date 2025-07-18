@@ -1,0 +1,51 @@
+{% extends "base/base.html" %} {% load static %} {% block title %}
+Delivery Report{% endblock title %} {% block body %}
+<main>
+  <div class="container">
+    <div class="row justify-content-center p-4">
+      <div class="row mb-3">
+        <div class="col-12">
+          <h3>Delivery Report</h3>
+        </div>
+      </div>
+      <div class="col-12">
+        <div class="card mb-4">
+      <div class="card-header">
+        <i class="fas fa-table me-1"></i>
+        Reports
+      </div>
+      <div class="card-body">
+        <table id="datatablesSimple">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Articolo</th>
+              <th>Piz</th>
+              <th>Total Price</th>
+              <th>Company Name</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for deliveryProduct in delivery %}
+            <tr>
+              <td> {{deliveryProduct.date}} </td>
+              <td>{{deliveryProduct.product.art}}</td>
+              <td>{{deliveryProduct.piz}}</td>
+              <td>{{deliveryProduct.total_price}}</td>
+              <td>{{deliveryProduct.product.company_name}}</td>
+              <td>
+                <a class="btn btn-sm" href="">Edit</a>
+                <a class="btn btn-sm" href="">Delete</a>
+               </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    </div>
+  </div>
+</main>
+
+{% endblock body %}

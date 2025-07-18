@@ -1,0 +1,126 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}
+    Add Delivery Product
+{% endblock title %}
+
+{% block body %}
+<main>
+    <div class="container">
+        <div class="row justify-content-center p-4">
+            <div class="row mb-3">
+                <div class="col-12">
+                    <h3>Add Delivery Product</h3>
+                </div>
+            </div>
+            <div class="col-12">
+                {% if error %}
+                    <div class="alert alert-danger">{{ error }}</div>
+                {% endif %}
+                {% if success %}
+                    <div class="alert alert-success">{{ success }}</div>
+                {% endif %}
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    
+                    <!-- Date -->
+                    <div class="form-floating mb-3">
+                        <input class="form-control" id="date" type="date" name="date" required />
+                        <label for="date">Date</label>
+                    </div>
+
+                    <!-- Art Select -->
+                    <div class="form-floating mb-3">
+                        <select class="form-select" name="art" id="art" required>
+                            <option disabled selected>-- Select Articolo --</option>
+                            {% for art in productlist %}
+                                <option value="{{ art.art }}">{{ art.art }}</option>
+                            {% endfor %}
+                        </select>
+                        <label for="art">Art</label>
+                    </div>
+
+                    <!-- Product piz from model (readonly display) -->
+                    <div class="form-floating mb-3">
+                        <input class="form-control" id="inpiz" type="text" placeholder="piz" disabled />
+                        <label for="inpiz">Product in Piz</label>
+                    </div>
+
+                    <!-- Unit Price from model (readonly display) -->
+                    <div class="form-floating mb-3">
+                        <input class="form-control" id="price" type="text" placeholder="Unit Price" disabled />
+                        <label for="price">Product Price (per piz)</label>
+                    </div>
+
+                    <!-- Delivery piz input -->
+                    <div class="form-floating mb-3">
+                        <input class="form-control" id="piz" type="number" name="piz" placeholder="Enter delivery piz" required />
+                        <label for="piz">Delivery Piz</label>
+                    </div>
+
+                    <!-- Total Price (auto-calculated) -->
+                    <div class="form-floating mb-3">
+                        <input class="form-control" id="totalprice" type="text" name="price" readonly required />
+                        <label for="totalprice">Total Price</label>
+                    </div>
+
+                    <!-- Submit button -->
+                    <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
+                        <button class="btn btn-primary w-100" type="submit">Add</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Script for fetching piz and price -->
+<script>
+    let price = 0; // unit price from model
+
+    $(document).ready(function () {
+        // When art is selected
+        $('#art').change(function () {
+            var selectedArt = $(this).val();
+            if (selectedArt) {
+                $.ajax({
+                    url: "{% url 'get_piz' %}",  // Django view must return JSON {piz: , price: }
+                    data: { 'art': selectedArt },
+                    dataType: 'json',
+                    success: function (data) {
+                        $('#inpiz').val(data.piz);
+                        $('#price').val(data.price);
+                        price = parseFloat(data.price);
+                        calculateTotalPrice(); // auto calculate if piz already exists
+                    }
+                });
+            } else {
+                $('#inpiz').val('');
+                $('#price').val('');
+                price = 0;
+                $('#totalprice').val('');
+            }
+        });
+
+        // When delivery piz is changed
+        $('#piz').on('input', function () {
+            calculateTotalPrice();
+        });
+
+        // Calculate total price
+        function calculateTotalPrice() {
+            var piz = parseFloat($('#piz').val());
+            if (!isNaN(piz) && !isNaN(price)) {
+                var total = piz * price;
+                $('#totalprice').val(total.toFixed(2));
+            } else {
+                $('#totalprice').val('');
+            }
+        }
+    });
+</script>
+{% endblock body %}

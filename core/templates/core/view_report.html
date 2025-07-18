@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Employee Attendance Tracker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 20px;
+      }
+
+      .container {
+        background: #fff;
+        max-width: 1000px;
+        margin: auto;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+      }
+
+      h2 {
+        text-align: center;
+        font-size: 22px;
+        margin-bottom: 20px;
+      }
+
+      .employee-name {
+        margin-bottom: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .employee-name label {
+        font-weight: bold;
+        font-size: 16px;
+      }
+
+      .employee-name input {
+        padding: 8px;
+        font-size: 16px;
+        flex: 1;
+        min-width: 200px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+
+      .table-wrapper {
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 900px;
+      }
+
+      th,
+      td {
+        border: 1px solid #ccc;
+        padding: 6px;
+        text-align: center;
+        font-size: 14px;
+      }
+
+      th {
+        background-color: #e6e6e6;
+      }
+
+      @media (max-width: 600px) {
+        h2 {
+          font-size: 18px;
+        }
+
+        .employee-name {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .employee-name input {
+          width: 100%;
+        }
+
+        table {
+          font-size: 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>EMPLOYEE ATTENDANCE TRACKER</h2>
+      <div class="employee-name">
+        <h3>Employee Name: {{ attandentsReport.0.employee.name }}</h3>
+        <h4>Total Hours This Year: {{ total_hours }} Hour</h4>
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Day</th>
+              <th>JAN</th>
+              <th>FEB</th>
+              <th>MAR</th>
+              <th>APR</th>
+              <th>MAY</th>
+              <th>JUN</th>
+              <th>JUL</th>
+              <th>AUG</th>
+              <th>SEP</th>
+              <th>OCT</th>
+              <th>NOV</th>
+              <th>DEC</th>
+            </tr>
+          </thead>
+          <tbody id="attendance-body"></tbody>
+        </table>
+      </div>
+
+      <div
+        id="month-details"
+        style="
+          margin-top: 20px;
+          background: #f9f9f9;
+          padding: 15px;
+          border-radius: 8px;
+          display: none;
+        "
+      >
+        <h3>Attendance Details for <span id="month-name"></span></h3>
+        <ul id="details-list" style="list-style: none; padding-left: 0"></ul>
+      </div>
+    </div>
+
+    <script>
+      const attendanceData = [
+        {% for att in attandentsReport %}
+          {
+            date: "{{ att.date }}",
+            entry: "{{ att.entry }}",
+            out: "{{ att.out }}",
+            total_hour: "{{ att.total_hour }}"
+          },
+        {% endfor %}
+      ];
+
+      const tbody = document.getElementById("attendance-body");
+      const monthDetailsDiv = document.getElementById("month-details");
+      const monthNameSpan = document.getElementById("month-name");
+      const detailsList = document.getElementById("details-list");
+
+      const monthNames = ["January", "February", "March", "April", "May", "June",
+                          "July", "August", "September", "October", "November", "December"];
+
+      // Create table: 31 rows, 12 months
+      for (let day = 1; day <= 31; day++) {
+        let row = `<tr><td>${day}</td>`;
+        for (let month = 0; month < 12; month++) {
+          row += `<td id="cell-${day}-${month}" data-day="${day}" data-month="${month}"></td>`;
+        }
+        row += "</tr>";
+        tbody.innerHTML += row;
+      }
+
+      // Fill attendance data in the table
+      attendanceData.forEach(record => {
+        const [year, monthStr, dayStr] = record.date.split("-");
+        const day = parseInt(dayStr);
+        const month = parseInt(monthStr) - 1;
+
+        const cell = document.getElementById(`cell-${day}-${month}`);
+        if (cell) {
+          cell.innerHTML = `${record.entry} - ${record.out}<br><small>${record.total_hour} hrs</small>`;
+          cell.style.backgroundColor = "#d4edda";
+        }
+      });
+
+      // Add click event to cells
+      document.querySelectorAll("td[id^='cell-']").forEach(cell => {
+        cell.style.cursor = 'pointer';
+        cell.addEventListener("click", () => {
+          const month = parseInt(cell.dataset.month);
+          const day = parseInt(cell.dataset.day);
+          let year = null;
+
+          for (let rec of attendanceData) {
+            const [y, mStr, dStr] = rec.date.split("-");
+            if (parseInt(mStr) - 1 === month && parseInt(dStr) === day) {
+              year = parseInt(y);
+              break;
+            }
+          }
+          if (!year && attendanceData.length > 0) {
+            year = parseInt(attendanceData[0].date.split("-")[0]);
+          }
+
+          showMonthDetails(year, month);
+        });
+      });
+
+      // Show details for selected month
+      function showMonthDetails(year, month) {
+        monthNameSpan.textContent = `${monthNames[month]} ${year}`;
+        detailsList.innerHTML = "";
+
+        const records = attendanceData.filter(rec => {
+          const [y, mStr, dStr] = rec.date.split("-");
+          return parseInt(y) === year && (parseInt(mStr) - 1) === month;
+        });
+
+        if (records.length === 0) {
+          detailsList.innerHTML = "<li>No attendance data for this month.</li>";
+        } else {
+          let totalHours = 0;
+          records.forEach(rec => {
+            totalHours += parseFloat(rec.total_hour);
+            detailsList.innerHTML += `
+              <li>
+                
+              </li>
+            `;
+          });
+          detailsList.innerHTML += `<li><strong>Total Hours for ${monthNames[month]}:</strong> ${totalHours} Hour</li>`;
+        }
+
+        monthDetailsDiv.style.display = "block";
+        monthDetailsDiv.scrollIntoView({ behavior: "smooth" });
+      }
+    </script>
+  </body>
+</html>

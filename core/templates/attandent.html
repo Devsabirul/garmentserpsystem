@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Employee Attendance Tracker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      background: #fff;
+      max-width: 1000px;
+      margin: auto;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-radius: 8px;
+    }
+
+    h2 {
+      text-align: center;
+      font-size: 22px;
+      margin-bottom: 20px;
+    }
+
+    .employee-name {
+      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .employee-name label {
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .employee-name input {
+      padding: 8px;
+      font-size: 16px;
+      flex: 1;
+      min-width: 200px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 900px;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 6px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    th {
+      background-color: #e6e6e6;
+    }
+
+    @media (max-width: 600px) {
+      h2 {
+        font-size: 18px;
+      }
+
+      .employee-name {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .employee-name input {
+        width: 100%;
+      }
+
+      table {
+        font-size: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>EMPLOYEE ATTENDANCE TRACKER</h2>
+    <div class="employee-name">
+      <label for="employee">EMPLOYEE NAME:</label>
+      <input type="text" id="employee" name="employee" placeholder="Enter employee name">
+    </div>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>JAN</th><th>FEB</th><th>MAR</th><th>APR</th><th>MAY</th><th>JUN</th>
+            <th>JUL</th><th>AUG</th><th>SEP</th><th>OCT</th><th>NOV</th><th>DEC</th>
+          </tr>
+        </thead>
+        <tbody id="attendance-body">
+          <!-- Rows will be inserted by JavaScript -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    const tbody = document.getElementById('attendance-body');
+    for (let i = 1; i <= 31; i++) {
+      let row = '<tr><td>' + i + '</td>';
+      for (let j = 0; j < 12; j++) {
+        row += '<td></td>';
+      }
+      row += '</tr>';
+      tbody.innerHTML += row;
+    }
+  </script>
+</body>
+</html>

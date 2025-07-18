@@ -1,0 +1,52 @@
+{% extends "base/base.html" %} {% load static %} {% block title %}
+Attandents Report{% endblock title %} {% block body %}
+<main>
+  <div class="container">
+    <div class="row justify-content-center p-4">
+      <div class="row mb-3">
+        <div class="col-12">
+          <h3>Attandents Report</h3>
+        </div>
+      </div>
+      <div class="col-12">
+        <div class="card mb-4">
+      <div class="card-header">
+        <i class="fas fa-table me-1"></i>
+        Reports
+      </div>
+      <div class="card-body">
+        <table id="datatablesSimple">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Date</th>
+              <th>In Time</th>
+              <th>Out Time</th>
+              <th>Total Hour</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for attandentsreport in attandentsReport %}
+            <tr>
+              <td> {{attandentsreport.name}} </td>
+              <td>{{attandentsreport.date}}</td>
+              <td>{{attandentsreport.entry}}</td>
+              <td>{{attandentsreport.out}}</td>
+              <td>{{attandentsreport.total_hour}}</td>
+              <td>
+                <a class="btn btn-sm" href="{% url 'view_attandents_Report' %}?id={{attandentsreport.employee.id}}&date={{attandentsreport.date}} ">View</a>
+                <a class="btn btn-sm" href="">Edit</a>
+                <a class="btn btn-sm" href="">Delete</a>
+               </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    </div>
+  </div>
+</main>
+
+{% endblock body %}
