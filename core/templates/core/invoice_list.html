@@ -1,14 +1,55 @@
-{% extends "base/base.html" %}
+{% extends "base/base.html" %} {% load static %} {% block title %}
+Invoice List{% endblock title %} {% block body %}
+<main>
+  <div class="container">
+    <div class="row justify-content-center p-4">
+      <div class="col-12">
+        <div class="row mb-3">
+          <div class="col-12">
+            <h3>Invoices</h3>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <div class="card mb-3">
+              <div class="card-header">
+                <i class="fas fa-table me-1"></i>
+                Invoice List
+              </div>
+              <div class="card-body">
+                <table id="datatablesSimple">
+                  <thead>
+                    <tr>
+                      <th>S.N</th>
+                      <th>Company Name</th>
+                      <th>Date</th>
+                      <th>Invoice Number</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for invoice in invoices %}
+                    <tr>
+                      <td>{{ forloop.counter }}</td>
+                      <td> {{invoice.company.name}} </td>
+                      <td>{{invoice.date}}</td>
+                      <td>{{invoice.invoice_number}}</td>
+                      <td>
+                        <a class="btn btn-sm" href="{% url 'invoice_detail' invoice.id %}">View</a>
+                        <a class="btn btn-sm" href="">Edit</a>
+                        <a class="btn btn-sm" href="">Delete</a>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
 
-{% block title %}Invoice List{% endblock %}
-
-{% block body %}
-<h2>Invoices</h2>
-<ul>
-  {% for invoice in invoices %}
-    <li><a href="{% url 'invoice_detail' invoice.id %}">Invoice #{{ invoice.id }}</a></li>
-  {% empty %}
-    <li>No invoices found.</li>
-  {% endfor %}
-</ul>
-{% endblock %}
+{% endblock body %}

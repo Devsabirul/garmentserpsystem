@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Invoice - Fason Said</title>
@@ -27,7 +28,8 @@
       overflow: hidden;
     }
 
-    th, td {
+    th,
+    td {
       padding: 12px 15px;
       text-align: center;
       border-bottom: 1px solid #e1e1e1;
@@ -53,91 +55,136 @@
       font-weight: bold;
     }
 
-    .summary-table th {
-      background-color: #2980b9;
-    }
-
-    .summary-table td {
-      font-weight: bold;
-    }
-
     p {
       font-size: 16px;
-      text-align: right;
+      text-align: left;
       color: #555;
     }
 
     @media (max-width: 768px) {
-      table, th, td {
+
+      table,
+      th,
+      td {
         font-size: 12px;
       }
     }
   </style>
 </head>
+
 <body>
-  <h2>{{invoice.0.invoice.company.name}}</h2>
+  <h2 style="text-align:left;font-size:50px;margin-bottom: 0;">Invoice</h2>
+  <div style="
+    line-height: 15px;
+    float: left;
+    margin-bottom: 33px;
+">
+    <p><strong>Fattura id:</strong> {{invoice.0.invoice.invoice_number}}</p>
+    <p><strong>Fattura del:</strong> {{invoice.0.invoice.date}}</p>
+    <p><strong>Company Name:</strong> {{invoice.0.invoice.company.name}}</p>
+  </div>
 
-  <table>
-    <thead>
-      <tr>
-        <th>ARTICOLO</th>
-        <th>Ns. DDT</th>
-        <th>DATA C</th>
-        <th>PZ. CARICO</th>
-        <th>PREZZO</th>
-        <th>DATA S</th>
-        <th>PZ. SCARICO</th>
-        <th>TOTALE</th>
-        <th>VS. DDT</th>
-        <th>DIFF</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for item in invoice %}{% endfor %}
-      <tr>
-        <td>{{item.delivery.product.art}}</td>
-        <td>OSBL2605</td>
-        <td>21/05/2025</td>
-        <td>16</td>
-        <td>8.00 €</td>
-        <td>03/06/2025</td>
-        <td>16</td>
-        <td>128.00 €</td>
-        <td>16</td>
-        <td>0</td>
-      </tr>
-    </tbody>
-    <tfoot>
-      <tr class="total-row">
-        <td colspan="3">TOTALE CAPI</td>
-        <td>635</td>
-        <td colspan="2"></td>
-        <td>630</td>
-        <td colspan="3"></td>
-      </tr>
-    </tfoot>
-  </table>
+  <table id="invoice-table" >
+  <thead>
+    <tr>
+      <th>ARTICOLO</th>
+      <th>DATA C</th>
+      <th>PZ. CARICO</th>
+      <th>PREZZO</th>
+      <th>DATA S</th>
+      <th>PZ. SCARICO</th>
+      <th>TOTALE</th>
+      <th>DIFF</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in invoice %}
+    <tr>
+      <td>{{ item.delivery.product.art }}</td>
+      <td>{{ item.delivery.product.date }}</td>
+      <td class="pz-carico">{{ item.delivery.product.piz }}</td>
+      <td>{{ item.delivery.product.price }}</td>
+      <td>{{ item.delivery.date }}</td>
+      <td class="pz-scarico">{{ item.delivery.piz }}</td>
+      <td class="total-price">{{ item.delivery.total_price }}</td>
+      <td class="diff">{{ item.delivery.diffCalculate }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+  <tfoot  style="background-color: #2C3E50; color:white;">
+    <tr>
+      <td colspan="2"><strong>TOTALE</strong></td>
+      <td id="sum-carico"></td>
+      <td></td>
+      <td></td>
+      <td id="sum-scarico"></td>
+      <td id="sum-total"></td>
+      <td id="sum-diff"></td>
+    </tr>
+  </tfoot>
+</table>
 
-  <table class="summary-table">
-    <thead>
-      <tr>
-        <th>IMPONIBILE</th>
-        <th>SCONTO 5%</th>
-        <th>IVA 22%</th>
-        <th>TOTALE FATTURA</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>1,958.00 €</td>
-        <td>145.01 €</td>
-        <td>385.14 €</td>
-        <td>2,900.20 €</td>
-      </tr>
-    </tbody>
-  </table>
+<!-- Back to Invoice List Button (Hidden initially) -->
+<a id="back-btn" href="{% url 'invoice_list' %}" style="
+  margin-top: 20px;
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #fff;
+  background-color: #6c757d;
+  border: none;
+  border-radius: 4px;
+  text-decoration: none;
+  cursor: pointer;
+">
+  Back to Invoice List
+</a>
 
-  <p><strong>Fattura del:</strong> {{invoice.invoice.date}}</p>
+<!-- Print Button -->
+<button id="print-btn" onclick="handlePrint()" style="
+  display: inline-block;
+  margin-top: 20px;
+  margin-left: 10px;
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #fff;
+  background-color: #007bff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+">
+  Print
+</button>
+
+<script>
+  function sumColumn(className) {
+    let sum = 0;
+    document.querySelectorAll('.' + className).forEach(cell => {
+      const val = parseFloat(cell.textContent.trim());
+      if (!isNaN(val)) sum += val;
+    });
+    return sum.toFixed(2);
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById('sum-carico').textContent = sumColumn('pz-carico');
+    document.getElementById('sum-scarico').textContent = sumColumn('pz-scarico');
+    document.getElementById('sum-total').textContent = sumColumn('total-price');
+    document.getElementById('sum-diff').textContent = sumColumn('diff');
+  });
+
+   function handlePrint() {
+    // Hide back button and print button
+    document.getElementById("back-btn").style.display = "none";
+    const printBtn = document.getElementById("print-btn");
+    printBtn.style.display = "none";
+
+    // Trigger print
+    window.print();
+}
+
+</script>
 
 </body>
 </html>

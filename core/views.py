@@ -322,8 +322,6 @@ def add_invoice(request):
 
 def invoice_detail(request, invoice_id):
     invoice = InvoiceItem.objects.filter(invoice__id=invoice_id)
-    
-    print(invoice[0].invoice.company.name)
 
     return render(request, 'core/invoice_detail.html', {
         'invoice': invoice,

@@ -44,13 +44,21 @@ class Products(models.Model):
         return self.art
     
 class ProductDelivery(models.Model):
-    product = models.ForeignKey(Products,on_delete=models.CASCADE)
+    product = models.ForeignKey(Products, on_delete=models.CASCADE)
     date = models.CharField(max_length=250)
     piz = models.CharField(max_length=250)
     total_price = models.CharField(max_length=250)
 
     def __str__(self):
         return self.product.art
+
+    @property
+    def diffCalculate(self):
+        try:
+            return self.product.piz - int(self.piz)
+        except (ValueError, TypeError):
+            return 0
+
 
 class Invoice(models.Model):
     company = models.ForeignKey(Companies, on_delete=models.CASCADE)
