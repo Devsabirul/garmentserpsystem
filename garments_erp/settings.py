@@ -86,10 +86,16 @@ WSGI_APPLICATION = 'garments_erp.wsgi.application'
 # }
 # renderer postgressql connect 
 DATABASES = {
-    'default': dj_database_url.parse(
-        'postgresql://garmentserp_user:sqkkN74nVhEKwIpL4eoj9AskylNUBlC5@dpg-d1te7ler433s73dlh1eg-a/garmentserp'
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'garmentserp',
+        'USER': 'garmentserp_user',
+        'PASSWORD': 'sqkkN74nVhEKwIpL4eoj9AskylNUBlC5',
+        'HOST': 'dpg-d1te7ler433s73dlh1eg-a',
+        'PORT': '5432',
+    }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
