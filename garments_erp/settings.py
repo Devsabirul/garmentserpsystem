@@ -91,10 +91,11 @@ DATABASES = {
         'NAME': 'garmentserp',
         'USER': 'garmentserp_user',
         'PASSWORD': 'sqkkN74nVhEKwIpL4eoj9AskylNUBlC5',
-        'HOST': 'dpg-d1te7ler433s73dlh1eg-a',
+        'HOST': 'dpg-d1te7ler433s73dlh1eg-a.singapore-postgres.render.com',
         'PORT': '5432',
     }
 }
+
 
 
 # Password validation
