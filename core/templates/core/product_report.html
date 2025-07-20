@@ -37,7 +37,7 @@ Products Report{% endblock title %} {% block body %}
               <td>{{product.delivery_date}}</td>
               <td>{{product.company_name}}</td>
               <td>
-                <a class="btn btn-sm" href="">Edit</a>
+                <a class="btn btn-sm" href="{% url 'update_product' product.id %}">Edit</a>
                 <a class="btn btn-sm" href="">Delete</a>
                </td>
             </tr>

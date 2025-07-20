@@ -37,33 +37,46 @@
         <div class="card bg-primary text-white mb-4">
           <div class="card-body">
             <p>Total Product Delivery</p>
-            <h4>499</h4>
+            <h4>{{deliveryProduct|length }}</h4>
           </div>
         </div>
       </div>
     </div>
-    <div class="row">
-      <div class="col-xl-6">
-        <div class="card mb-4">
-          <div class="card-header">
-            <i class="fas fa-chart-area me-1"></i>
-            Area Chart Example
-          </div>
-          <div class="card-body">
-            <canvas id="myAreaChart" width="100%" height="40"></canvas>
-          </div>
+    <div class="row justify-content-center p-4">
+      <div class="row mb-3">
+        <div class="col-12">
+          <h3>Delivery Report</h3>
         </div>
       </div>
-      <div class="col-xl-6">
+      <div class="col-12">
         <div class="card mb-4">
-          <div class="card-header">
-            <i class="fas fa-chart-bar me-1"></i>
-            Bar Chart Example
-          </div>
-          <div class="card-body">
-            <canvas id="myBarChart" width="100%" height="40"></canvas>
-          </div>
-        </div>
+      <div class="card-header">
+        <i class="fas fa-table me-1"></i>
+        Reports
+      </div>
+      <div class="card-body">
+        <table id="datatablesSimple">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Articolo</th>
+              <th>Piz</th>
+              <th>Total Price</th>
+              <th>Company Name</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for delivery in deliveryProduct %}
+            <tr>
+              <td> {{delivery.date}} </td>
+              <td>{{delivery.product.art}}</td>
+              <td>{{delivery.piz}}</td>
+              <td>{{delivery.total_price}}</td>
+              <td>{{delivery.product.company_name}}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
       </div>
     </div>
 

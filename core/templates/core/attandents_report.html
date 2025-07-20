@@ -36,8 +36,7 @@ Attandents Report{% endblock title %} {% block body %}
               <td>{{attandentsreport.total_hour}}</td>
               <td>
                 <a class="btn btn-sm" href="{% url 'view_attandents_Report' %}?id={{attandentsreport.employee.id}}&date={{attandentsreport.date}} ">View</a>
-                <a class="btn btn-sm" href="">Edit</a>
-                <a class="btn btn-sm" href="">Delete</a>
+                <a class="btn btn-sm" href="{% url 'attandents_delete' attandentsreport.id %}">Delete</a>
                </td>
             </tr>
             {% endfor %}

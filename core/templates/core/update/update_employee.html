@@ -1,0 +1,50 @@
+{% extends 'base/base.html' %} {% load static %} {% block title %}
+  Update Employee
+{% endblock %} {% block body %}
+  <main>
+    <div class="container">
+      <div class="row justify-content-center p-4">
+        <div class="row mb-3">
+          <div class="col-12">
+            <h3>Update Employee</h3>
+          </div>
+        </div>
+        <div class="col-12">
+          {% if error %}
+            <div class="alert alert-danger">{{ error }}</div>
+          {% endif %} {% if success %}
+            <div class="alert alert-success">{{ success }}</div>
+          {% endif %}
+          <form action="" method="POST">
+            {% csrf_token %}
+            <div class="form-floating mb-3">
+              <input class="form-control" id="Name" type="text" placeholder="Name" value="{{employee.name}}" name="name" disabled />
+              <label for="Name">Name</label>
+            </div>
+            <div class="form-floating mb-3">
+              <input class="form-control" id="phone" value="{{employee.phone_number}}" type="text" placeholder="Phone Number" name="phone_number" required />
+              <label for="phone">Phone</label>
+            </div>
+            <div class="form-floating mb-3">
+              <input class="form-control" id="address" type="text" value="{{employee.address}}" placeholder="Address" name="address" required />
+              <label for="address">Address</label>
+            </div>
+            
+            <div class="form-floating mb-3">
+              <input class="form-control" id="position" value="{{employee.position}}" type="text" placeholder="Position(e.g. Singer,Helper)" name="position" required />
+              <label for="position">Position(e.g. Singer,Helper)</label>
+            </div>
+            <div class="form-floating mb-3">
+              <input class="form-control" value="{{employee.hourlyrate}}" id="hourlyrate" type="text" placeholder="hourlyrate" name="hourlyrate" required />
+              <label for="hourlyrate">Hourly Rate</label>
+            </div>
+
+            <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
+              <button class="btn btn-primary w-100">Update Employee</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+{% endblock %}

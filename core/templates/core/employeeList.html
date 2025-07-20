@@ -37,8 +37,8 @@ Employee Tables{% endblock title %} {% block body %}
                       <td>{{employee.position}}</td>
                       <td>{{employee.hourlyrate}}</td>
                       <td>
-                        <a class="btn btn-sm" href="">Edit</a>
-                        <a class="btn btn-sm" href="">Delete</a>
+                        <a class="btn btn-sm" href="{% url 'update_employee' employee.id %}">Edit</a>
+                        <a class="btn btn-sm" href="{% url 'delete_employee' employee.id %}">Delete</a>
                       </td>
                     </tr>
                     {% endfor %}

@@ -9,6 +9,7 @@ from datetime import date
 
 def dashboard(request):
     if request.user.is_authenticated:
+        deliveryProduct = ProductDelivery.objects.all()
         employeeLenth = Employees.objects.all()
         companyLength = Companies.objects.all()
         productLength = Products.objects.all()
@@ -63,6 +64,15 @@ def addAttandents(request):
         'error': error,
         'success': success
     })
+
+
+def deleteAttandents(request,id):
+    if not request.user.is_authenticated:
+        return redirect('signin')
+    
+    a = Atandents.objects.get(id=id)
+    a.delete()
+    return  redirect("attandents_Report")
 
     
 def attandentsReport(request):
@@ -155,6 +165,64 @@ def addProducts(request):
         'success': success
     })
 
+def updateProducts(request,id):
+    if not request.user.is_authenticated:
+        return redirect('signin')
+
+    companyList = Companies.objects.all()
+    product = Products.objects.get(
+            id=id
+        )
+    error = None
+    success = None
+
+    if request.method == "POST":
+        date = request.POST.get('date')
+        art = request.POST.get('art')
+        piz = request.POST.get('piz')
+        price = request.POST.get('price')
+        delivery_date = request.POST.get('delivery_date')
+        company_name_str = request.POST.get('company_name')
+
+        try:
+            company_instance = Companies.objects.get(name=company_name_str)
+        except Companies.DoesNotExist:
+            error = f"Company '{company_name_str}' does not exist."
+            return render(request, 'core/update/update_products.html', {
+                'companyList': companyList,
+                'error': error,
+                'success': success,
+                'product':product
+            })
+
+        product = Products.objects.get(
+            id=id
+        )
+        product.date=date,
+        product.art=art,
+        product.piz=piz,
+        product.price=price,
+        product. delivery_date=delivery_date,
+        product. company_name=company_instance
+        product.save()
+        success = "Product updated successfully."
+
+    return render(request, 'core/update/update_products.html', {
+        'companyList': companyList,
+        'error': error,
+        'success': success,
+        'product':product
+    })
+
+def delete_product(request, id):
+    if not request.user.is_authenticated:
+        return redirect('signin')
+
+    p = Products.objects.get(id=id)
+    p.delete()
+
+    return redirect("delete_product")
+
 def addEmployee(request):
     if not request.user.is_authenticated:
         return redirect('signin')
@@ -187,6 +255,48 @@ def addEmployee(request):
         'error': error,
         'success': success
     })
+
+def updateEmployee(request,id):
+    if not request.user.is_authenticated:
+        return redirect('signin')
+
+    error = None
+    success = None
+    employee = Employees.objects.get(id=id)
+
+    if request.method == "POST":
+        name = request.POST.get('name')
+        phone_number = request.POST.get('phone_number')
+        address = request.POST.get('address')
+        position = request.POST.get('position')
+        hourlyrate = request.POST.get('hourlyrate')
+
+        try:
+            employee = Employees.objects.get(id=id)
+            employee.phone_number = phone_number
+            employee.address = address
+            employee.position = position
+            employee.hourlyrate = hourlyrate
+            employee.save()
+            success = "Employee updated successfully."
+        except:
+            error = "Something wrong, Please try again!"
+
+
+    return render(request, 'core/update/update_employee.html', {
+        'error': error,
+        'success': success,
+        'employee':employee,
+    })
+
+def delete_employee(request, id):
+    if not request.user.is_authenticated:
+        return redirect('signin')
+
+    employee = Employees.objects.get(id=id)
+    employee.delete()
+
+    return redirect("employee_list")
 
 def addCompany(request):
     if not request.user.is_authenticated:
